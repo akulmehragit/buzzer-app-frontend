@@ -228,7 +228,7 @@ export default function Home() {
 
                         <div className="bg-white/5 rounded-2xl p-4 border border-white/10 text-left">
                             <h3 className="text-xs font-bold uppercase text-white/40 mb-3 tracking-widest">Buzz Order</h3>
-                            <div className="flex flex-col gap-2 max-h-[180px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10">
+                            <div className="flex flex-col gap-2 max-h-[100px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10">
                                 {buzzOrder.map((buzz, index) => {
                                     const p = players.find((player) => player.userId === buzz.userId);
                                     let displayName = p ? p.name : "Unknown";
