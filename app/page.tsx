@@ -14,7 +14,7 @@ interface BuzzEntry {
 export default function Home() {
     const [roomId, setRoomId] = useState("");
     const [name, setName] = useState("");
-    const [players, setPlayers] = useState<{ id: string, name: string }[]>([]);
+    const [players, setPlayers] = useState<{ id: string, name: string, userId: string }[]>([]);
     const [buzzOrder, setBuzzOrder] = useState<BuzzEntry[]>([]);
     const [joined, setJoined] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
@@ -211,7 +211,7 @@ export default function Home() {
                             <h3 className="text-xs font-bold uppercase text-white/40 mb-3 tracking-widest">Buzz Order</h3>
                             <div className="flex flex-col gap-2">
                                 {buzzOrder.map((buzz, index) => {
-                                    const p = players.find((player) => player.id === buzz.userId);
+                                    const p = players.find((player) => player.userId === buzz.userId);
 
                                     let displayName = p ? p.name : "Unknown";
                                     if (!p && buzz.userId === localStorage.getItem("buzzer_userId")) {
