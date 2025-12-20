@@ -211,7 +211,7 @@ export default function Home() {
                             <h3 className="text-xs font-bold uppercase text-white/40 mb-3 tracking-widest">Buzz Order</h3>
                             <div className="flex flex-col gap-2">
                                 {buzzOrder.map((buzz, index) => {
-                                    const p = players.find((player) => player.userId === buzz.userId);
+                                    const p = players.find((player) => player.id === buzz.userId);
 
                                     let displayName = p ? p.name : "Unknown";
                                     if (!p && buzz.userId === localStorage.getItem("buzzer_userId")) {
