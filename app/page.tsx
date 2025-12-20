@@ -163,65 +163,71 @@ export default function Home() {
             <div className="relative z-20 w-full max-w-md px-6">
                 {!joined ? (
                     <div className="bg-white/10 backdrop-blur-xl p-10 rounded-[2.5rem] border border-white/20 shadow-2xl flex flex-col gap-6">
-                        <h1 className="text-4xl font-black text-center text-orange-400 uppercase">Ready... Go!</h1>
+                        <h1 className="text-4xl font-black text-center text-orange-400 uppercase">Ready... Vardhinedi Go!</h1>
                         <div className="space-y-4">
                             <input className="w-full bg-white/10 border border-white/10 p-4 rounded-2xl text-white outline-none" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
                             <input className="w-full bg-white/10 border border-white/10 p-4 rounded-2xl text-white outline-none" placeholder="Room ID" value={roomId} onChange={(e) => setRoomId(e.target.value)} />
                         </div>
                         <div className="flex flex-col gap-3">
-                            <button disabled={!name || !roomId} className="w-full bg-red-600 font-bold py-4 rounded-2xl text-white" onClick={handleJoinRoom}>Join Room</button>
-                            <button disabled={!name || roomId.length > 0} className="w-full bg-white/10 font-bold py-4 rounded-2xl text-white" onClick={handleCreateRoom}>Create New Room</button>
+                            <button disabled={!name || !roomId} className="w-full bg-red-600 font-bold py-4 rounded-2xl text-white transition-all active:scale-95" onClick={handleJoinRoom}>Join Room</button>
+                            <button disabled={!name || roomId.length > 0} className="w-full bg-white/10 font-bold py-4 rounded-2xl text-white transition-all active:scale-95" onClick={handleCreateRoom}>{isCreating ? "Creating..." : "Create New Room"}</button>
                         </div>
                     </div>
                 ) : (
                     <div className="bg-black/60 backdrop-blur-2xl p-6 rounded-[2.5rem] border border-white/20 shadow-2xl flex flex-col gap-4 text-white text-center w-full max-w-md h-[88vh]">
-                        {/* HOST DASHBOARD CONTROLS */}
                         <div className="flex gap-2">
-                            <button onClick={handleExit} className="flex-1 bg-white/10 py-3 rounded-xl text-[10px] font-bold uppercase">Exit</button>
+                            <button onClick={handleExit} className="flex-1 bg-white/10 py-3 rounded-xl text-[10px] font-bold uppercase active:scale-95">Exit</button>
                             {isHost && (
                                 <>
-                                    <button onClick={() => socket.emit("toggleLock", { roomId, userId: currentUser })} className={`flex-1 py-3 rounded-xl text-[10px] font-bold uppercase ${isLocked ? "bg-green-600/20 text-green-400 border border-green-500/50" : "bg-orange-600/20 text-orange-400 border border-orange-500/50"}`}>
+                                    <button onClick={() => socket.emit("toggleLock", { roomId, userId: currentUser })} className={`flex-1 py-3 rounded-xl text-[10px] font-bold uppercase border transition-all active:scale-95 ${isLocked ? "bg-green-600/20 text-green-400 border-green-500/50" : "bg-orange-600/20 text-orange-400 border-orange-500/50"}`}>
                                         {isLocked ? "Unlock" : "Lock"}
                                     </button>
-                                    <button onClick={() => socket.emit("reset", { roomId, userId: currentUser })} className="flex-1 bg-red-600/20 text-red-400 py-3 rounded-xl text-[10px] font-bold uppercase border border-red-500/50">Reset</button>
+                                    <button onClick={() => socket.emit("reset", { roomId, userId: currentUser })} className="flex-1 bg-red-600/20 text-red-400 py-3 rounded-xl text-[10px] font-bold uppercase border border-red-500/50 active:scale-95">Reset</button>
                                 </>
                             )}
                         </div>
 
                         <div>
                             <span className="text-[10px] font-black text-red-500 uppercase">Room Code</span>
-                            <h2 className="text-4xl font-mono font-black">{roomId}</h2>
-                            {isLocked && <p className="text-orange-400 text-[10px] font-bold uppercase mt-1 animate-pulse">Buzzer is Locked</p>}
+                            <h2 className="text-4xl font-mono font-black tracking-widest">{roomId}</h2>
+                            {isLocked && <p className="text-orange-400 text-[10px] font-bold uppercase mt-1 animate-pulse tracking-widest">Buzzer is Locked</p>}
                         </div>
 
-                        {/* PLAYERS LIST WITH HOST TAG */}
                         <div className="bg-white/5 rounded-2xl p-4 text-left">
-                            <h3 className="text-xs font-bold uppercase text-white/40 mb-3">Players</h3>
-                            <div className="flex flex-wrap gap-2 max-h-[80px] overflow-y-auto">
+                            <h3 className="text-xs font-bold uppercase text-white/40 mb-3 tracking-widest">Players</h3>
+                            <div className="flex flex-wrap gap-2 max-h-[80px] overflow-y-auto scrollbar-thin">
                                 {players.map((p) => (
                                     <span key={p.userId} className={`px-3 py-1 rounded-full text-[10px] font-semibold flex items-center gap-2 ${p.isOnline ? "bg-white/10" : "opacity-30"}`}>
                                         <div className={`w-1.5 h-1.5 rounded-full ${p.isOnline ? "bg-green-500" : "bg-gray-600"}`} />
                                         {p.name}
-                                        {p.isHost && <span className="text-[8px] bg-orange-500/20 text-orange-400 px-1.5 rounded border border-orange-500/50 uppercase ml-1">Host</span>}
+                                        {p.isHost && <span className="text-[8px] bg-orange-500/20 text-orange-400 px-1.5 rounded border border-orange-500/50 uppercase">Host</span>}
                                     </span>
                                 ))}
                             </div>
                         </div>
 
-                        {/* BUZZ ORDER */}
                         <div className="bg-white/5 rounded-2xl p-4 text-left flex-1 overflow-hidden flex flex-col">
-                            <h3 className="text-xs font-bold uppercase text-white/40 mb-3">Buzz Order</h3>
+                            <h3 className="text-xs font-bold uppercase text-white/40 mb-3 tracking-widest">Buzz Order</h3>
                             <div className="flex-1 overflow-y-auto space-y-2 pr-2 scrollbar-thin">
-                                {buzzOrder.map((buzz, index) => (
-                                    <div key={buzz.userId} className={`flex justify-between items-center p-3 rounded-xl border ${index === 0 ? 'bg-red-600/20 border-red-500' : 'bg-white/5 border-white/10'}`}>
-                                        <span className="font-bold text-sm truncate max-w-[150px]">{players.find(p => p.userId === buzz.userId)?.name || "User"}</span>
-                                        <span className={`text-xs font-black px-2 py-1 rounded ${index === 0 ? 'bg-red-500' : 'bg-white/10'}`}>#{index + 1}</span>
-                                    </div>
-                                ))}
+                                {buzzOrder.map((buzz, index) => {
+                                    const p = players.find(p => p.userId === buzz.userId);
+                                    const gap = index > 0 ? buzz.time - buzzOrder[0].time : 0;
+                                    const isWinner = index === 0;
+
+                                    return (
+                                        <div key={buzz.userId} className={`flex justify-between items-center p-3 rounded-xl border transition-all ${isWinner ? 'bg-red-600/20 border-red-500' : 'bg-white/5 border-white/10'}`}>
+                                            <div className="flex flex-col">
+                                                <span className="font-bold text-sm truncate max-w-[150px]">{p?.name || "User"}</span>
+                                                {index > 0 && <span className="text-[10px] text-red-400 font-mono font-bold">+{gap}ms</span>}
+                                            </div>
+                                            <span className={`text-xs font-black px-2 py-1 rounded ${isWinner ? 'bg-red-500 text-white' : 'bg-white/10 text-white/40'}`}>#{index + 1}</span>
+                                        </div>
+                                    );
+                                })}
+                                {buzzOrder.length === 0 && <p className="text-white/20 italic py-4 text-center text-sm">Waiting for the buzz...</p>}
                             </div>
                         </div>
 
-                        {/* BUZZER BUTTON */}
                         <button
                             onClick={handleBuzz}
                             disabled={isLocked || buzzOrder.some(b => b.userId === currentUser)}
