@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 
 const socket: Socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3000");
@@ -29,6 +29,25 @@ export default function Home() {
     const [buzzOrder, setBuzzOrder] = useState<BuzzEntry[]>([]);
     const [joined, setJoined] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+
+    useEffect(() => {
+        // Initialize audio
+        audioRef.current = new Audio("/buzz.mp3");
+
+        // Listen specifically for the first buzz to play sound
+        const handleSound = (order: BuzzEntry[]) => {
+            if (order.length === 1 && audioRef.current) {
+                audioRef.current.currentTime = 0; // Reset to start
+                audioRef.current.play().catch(e => console.log("Audio play blocked by browser:", e));
+            }
+        };
+
+        socket.on("buzzOrder", handleSound);
+        return () => {
+            socket.off("buzzOrder", handleSound);
+        };
+    }, []);
 
     // Dynamic Multi-Logo State
     const [logos, setLogos] = useState<LogoState[]>([]);
