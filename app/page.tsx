@@ -181,7 +181,7 @@ export default function Home() {
         return () => clearInterval(interval);
     }, []);
 
-    const teamHasBuzzed = (myTeam && myTeam !== "HOST" && buzzOrder.some(b => players.find(pl => pl.userId === b.userId)?.teamId === myTeam));
+    const teamHasBuzzed = !!(myTeam && myTeam !== "HOST" && buzzOrder.some(b => players.find(pl => pl.userId === b.userId)?.teamId === myTeam));
 
     return (
         <div className="relative w-full h-screen overflow-hidden bg-slate-950 flex items-center justify-center">
