@@ -7,7 +7,7 @@ import { QRCodeCanvas } from "qrcode.react";
 const socket: Socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3000");
 
 
-const TEAMS = ["Team Red", "Team Blue", "Team Green", "Team Gold", "Team Purple"];
+const TEAMS = ["Team Red", "Team Blue"];
 
 const teamStyles: Record<string, string> = {
     "Team Red": "bg-[#E64133] text-white border-[#E64133]",
@@ -191,7 +191,7 @@ export default function Home() {
 
                         {isHost && (
                             <>
-                                <div className="grid grid-cols-5 gap-1 bg-white/5 p-2 rounded-xl border border-white/10">
+                                <div className="grid grid-cols-2 gap-1 bg-white/5 p-2 rounded-xl border border-white/10">
                                     {TEAMS.map(t => (
                                         <div key={t} className={`flex flex-col items-center p-1 rounded-lg ${teamStyles[t]} opacity-80`}><span className="text-[8px] font-bold uppercase">{t.split(' ')[1]}</span><span className="text-sm font-black">{teamStats[t]?.wins || 0}</span></div>
                                     ))}
