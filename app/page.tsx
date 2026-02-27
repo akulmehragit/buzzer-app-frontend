@@ -6,8 +6,7 @@ import { QRCodeCanvas } from "qrcode.react";
 
 const socket: Socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3000");
 
-const DVD_SIZE = 180;
-const LOGO_IMAGES = ["/1.jpeg", "/2.png", "/3.jpeg"];
+
 const TEAMS = ["Team Red", "Team Blue", "Team Green", "Team Gold", "Team Purple"];
 
 const teamStyles: Record<string, string> = {
@@ -34,10 +33,10 @@ export default function Home() {
     const [isLocked, setIsLocked] = useState(false);
     const [joined, setJoined] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
-    const [logos, setLogos] = useState<{src: string, x: number, y: number, vx: number, vy: number}[]>([]);
-    const [clockOffset, setClockOffset] = useState(0); 
-    const [countdown, setCountdown] = useState<number | null>(null); 
-    const [canBuzz, setCanBuzz] = useState(false); 
+
+    const [clockOffset, setClockOffset] = useState(0);
+    const [countdown, setCountdown] = useState<number | null>(null);
+    const [canBuzz, setCanBuzz] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     const currentUser = typeof window !== 'undefined' ? localStorage.getItem("buzzer_userId") : null;
@@ -57,7 +56,7 @@ export default function Home() {
 
         const syncClock = () => socket.emit("sync_ping", { clientTime: Date.now() });
         socket.on("sync_pong", ({ clientTime, serverTime }) => {
-            const rtt = Date.now() - clientTime; 
+            const rtt = Date.now() - clientTime;
             setClockOffset((serverTime + rtt / 2) - Date.now());
         });
 
@@ -69,11 +68,11 @@ export default function Home() {
         };
 
         document.addEventListener("visibilitychange", handleVisibilityChange);
-        const interval = setInterval(syncClock, 10000); 
+        const interval = setInterval(syncClock, 10000);
         syncClock();
 
-        return () => { 
-            clearInterval(interval); 
+        return () => {
+            clearInterval(interval);
             socket.off("sync_pong");
             document.removeEventListener("visibilitychange", handleVisibilityChange);
         };
@@ -85,7 +84,7 @@ export default function Home() {
             setBuzzOrder(order);
             if (order.length === 1 && audioRef.current && isHostRef.current) {
                 audioRef.current.currentTime = 0;
-                audioRef.current.play().catch(() => {});
+                audioRef.current.play().catch(() => { });
             }
         });
         socket.on("lockStatus", (status) => setIsLocked(status));
@@ -139,23 +138,6 @@ export default function Home() {
             socket.emit("rejoinRoom", { roomId: savedRoom, name: savedName, userId: savedId });
             setJoined(true);
         }
-
-        setLogos(LOGO_IMAGES.map((src) => ({
-            src, x: Math.random() * (window.innerWidth - DVD_SIZE), y: Math.random() * (window.innerHeight - DVD_SIZE),
-            vx: (Math.random() > 0.5 ? 2 : -2), vy: (Math.random() > 0.5 ? 2 : -2),
-        })));
-    }, []);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setLogos((prev) => prev.map((l) => {
-                let nX = l.x + l.vx, nY = l.y + l.vy;
-                let nVx = (nX <= 0 || nX >= window.innerWidth - DVD_SIZE) ? -l.vx : l.vx;
-                let nVy = (nY <= 0 || nY >= window.innerHeight - DVD_SIZE) ? -l.vy : l.vy;
-                return { ...l, x: nX, y: nY, vx: nVx, vy: nVy };
-            }));
-        }, 16);
-        return () => clearInterval(interval);
     }, []);
 
     const teamHasBuzzed = !!(myTeam && myTeam !== "HOST" && buzzOrder.some(b => players.find(pl => pl.userId === b.userId)?.teamId === myTeam));
@@ -163,14 +145,12 @@ export default function Home() {
     return (
         <div className="relative w-full h-screen overflow-hidden bg-slate-950 flex items-center justify-center">
             <div className="absolute inset-0 z-0 opacity-40" style={{ backgroundImage: "url(/background.jpg)", backgroundSize: 'cover' }} />
-            {logos.map((logo, index) => (
-                <div key={index} className="absolute z-10 pointer-events-none opacity-30" style={{ left: logo.x, top: logo.y, width: DVD_SIZE, height: DVD_SIZE, backgroundImage: `url(${logo.src})`, backgroundSize: "contain", backgroundRepeat: "no-repeat" }} />
-            ))}
+
 
             <div className="relative z-20 w-full max-w-md px-6">
                 {!joined ? (
                     <div className="bg-white/10 backdrop-blur-xl p-10 rounded-[2.5rem] border border-white/20 shadow-2xl flex flex-col gap-6">
-                        <h1 className="text-4xl font-black text-center text-orange-400 uppercase leading-tight">Ready... Vardhinedi Go!</h1>
+                        <h1 className="text-4xl font-black text-center text-orange-400 uppercase leading-tight">Kick It With Kuv</h1>
                         <div className="space-y-4">
                             <input className="w-full bg-white/10 border border-white/10 p-4 rounded-2xl text-white outline-none placeholder:text-white/30" placeholder="Your Name" value={name} onChange={(e) => setName(e.target.value)} />
                             {roomId.length > 0 && (
@@ -180,7 +160,7 @@ export default function Home() {
                                         {TEAMS.map(t => <option key={t} value={t} className="bg-slate-900">{t}</option>)}
                                     </select>
                                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-white/40">
-                                        <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+                                        <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
                                     </div>
                                 </div>
                             )}
@@ -193,10 +173,10 @@ export default function Home() {
                     </div>
                 ) : (
                     <div className="bg-black/60 backdrop-blur-2xl p-6 rounded-[2.5rem] border border-white/20 shadow-2xl flex flex-col gap-4 text-white text-center w-full max-w-md h-[88vh]">
-                        
+
                         <div className="flex gap-2 items-center">
                             <button onClick={handleExit} className="bg-white/10 py-3 px-6 rounded-xl text-[10px] font-bold uppercase active:scale-95">Exit</button>
-                            
+
                             {!isHost ? (
                                 <div className="flex-1 bg-white/5 py-2 px-4 rounded-xl flex justify-between items-center border border-white/5">
                                     <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Room</span>
